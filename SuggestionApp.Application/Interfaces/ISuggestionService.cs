@@ -1,12 +1,10 @@
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
+using SuggestionApp.Application.Dtos.SuggestionService;
+using SuggestionApp.Application.Enums.Suggestion;
 
 namespace SuggestionApp.Application.Interfaces
 {
     public interface ISuggestionService
     {
+        Task<CreateSuggestionStatus> CreateSugcgestion(CreateSuggestionDto createSuggestionDto);
     }
 }

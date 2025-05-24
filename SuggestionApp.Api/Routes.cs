@@ -1,4 +1,4 @@
-﻿namespace SuggestionApp.Api
+namespace SuggestionApp.Api
 {
     public static class Routes
     {
@@ -23,6 +23,15 @@
             public const string GetAllProducts = $"{_controllerBase}/getAll";
 
             public const string CreateProduct = $"{_controllerBase}";
+        }
+
+        public static class Suggestion
+        {
+            private const string _controllerBase = $"{_base}/suggestion";
+
+            public const string GetAll = $"{_controllerBase}/getAll";
+
+            public const string CreateSuggestion = $"{_controllerBase}";
         }
 
 

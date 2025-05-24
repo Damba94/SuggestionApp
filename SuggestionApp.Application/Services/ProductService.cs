@@ -1,4 +1,4 @@
-﻿using Microsoft.EntityFrameworkCore;
+using Microsoft.EntityFrameworkCore;
 using SuggestionApp.Application.Dtos.ProductService;
 using SuggestionApp.Application.Enums.Product;
 using SuggestionApp.Application.Interfaces;
@@ -45,7 +45,8 @@ namespace SuggestionApp.Application.Services
                 return CreateProductStatus.InvalidData;
 
             var existing = await _context.Products
-                .AnyAsync(p => p.Name == createProductDto.Name && !p.IsDeleted);
+                .AsNoTracking()
+                .AnyAsync(p => p.Name == createProductDto.Name);
 
             if (existing)
                 return CreateProductStatus.AlreadyExists;

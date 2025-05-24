@@ -1,4 +1,4 @@
-﻿using Microsoft.AspNetCore.Authorization;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using SuggestionApp.Api.Dtos.ProductDtos;
 using SuggestionApp.Application.Enums.Product;
