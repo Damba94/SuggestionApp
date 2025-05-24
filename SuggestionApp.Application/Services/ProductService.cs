@@ -4,15 +4,10 @@ using SuggestionApp.Application.Enums.Product;
 using SuggestionApp.Application.Interfaces;
 using SuggestionApp.Data.Context;
 using SuggestionApp.Data.Models;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 
 namespace SuggestionApp.Application.Services
 {
-    public class ProductService:IProductService
+    public class ProductService : IProductService
     {
         private readonly ApplicationDbContext _context;
         public ProductService(
@@ -21,7 +16,7 @@ namespace SuggestionApp.Application.Services
             _context = dbContext;
         }
 
-        public async Task<(GetAllProductsStatus Status, List<GetAllProductsResult> ?Value)>GetAllProductsAsync()
+        public async Task<(GetAllProductsStatus Status, List<GetAllProductsResult>? Value)> GetAllProductsAsync()
         {
             try
             {
@@ -43,7 +38,7 @@ namespace SuggestionApp.Application.Services
             }
         }
 
-        public async Task<CreateProductStatus>CreateProductAsync(
+        public async Task<CreateProductStatus> CreateProductAsync(
             CreateProductDto createProductDto)
         {
             if (string.IsNullOrWhiteSpace(createProductDto.Name))
@@ -66,7 +61,7 @@ namespace SuggestionApp.Application.Services
                 return CreateProductStatus.Success;
 
             }
-            catch 
+            catch
             {
                 return (CreateProductStatus.Failure);
             }

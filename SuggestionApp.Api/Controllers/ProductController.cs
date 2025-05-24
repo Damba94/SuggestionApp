@@ -1,5 +1,4 @@
 ﻿using Microsoft.AspNetCore.Authorization;
-using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using SuggestionApp.Api.Dtos.ProductDtos;
 using SuggestionApp.Application.Enums.Product;
@@ -9,7 +8,7 @@ namespace SuggestionApp.Api.Controllers
 {
     [ApiController]
     public class ProductController : ControllerBase
-    {   
+    {
         private readonly IProductService _productService;
         public ProductController(
             IProductService productService)
@@ -21,18 +20,18 @@ namespace SuggestionApp.Api.Controllers
         [HttpGet(Routes.Product.GetAllProducts)]
         public async Task<ActionResult<List<GetAllProductsResponse>>> GetAllProducts()
         {
-            var (status,value)=await _productService
+            var (status, value) = await _productService
                 .GetAllProductsAsync();
 
             if (status is GetAllProductsStatus.NotFound)
-                return(BadRequest(status));
+                return (BadRequest(status));
 
             return Ok(value);
         }
 
-        [Authorize(Roles="ADMIN")]
+        [Authorize(Roles = "ADMIN")]
         [HttpPost(Routes.Product.CreateProduct)]
-        public async Task<ActionResult>CreateProduct(
+        public async Task<ActionResult> CreateProduct(
             CreateProductRequest createProductRequest)
         {
             var status = await _productService

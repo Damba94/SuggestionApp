@@ -25,6 +25,6 @@
             public const string CreateProduct = $"{_controllerBase}";
         }
 
-       
+
     }
- }
+}

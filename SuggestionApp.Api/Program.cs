@@ -4,6 +4,7 @@ using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.IdentityModel.Tokens;
 using SuggestionApp.Api.Dtos.AuthDtos;
+using SuggestionApp.Api.Dtos.SuggestionDtos;
 using SuggestionApp.Api.Validators;
 using SuggestionApp.Application.Interfaces;
 using SuggestionApp.Application.Services;
@@ -15,10 +16,12 @@ var builder = WebApplication.CreateBuilder(args);
 builder.Configuration.AddJsonFile("appsettings.json", optional: false, reloadOnChange: true);
 // Add Validators
 builder.Services.AddScoped<IValidator<RegisterRequest>, RegisterRequestValidator>();
-builder.Services.AddScoped<IValidator<LoginRequest>, LoginRequestValidator>();  
+builder.Services.AddScoped<IValidator<LoginRequest>, LoginRequestValidator>();
+builder.Services.AddScoped<IValidator<CreateSuggestionRequest>,CreateSuggestionValidator>();
 // Add Services
 builder.Services.AddScoped<IIdentityService, IdentityService>();
 builder.Services.AddScoped<IProductService, ProductService>();
+builder.Services.AddScoped<ISuggestionService, SuggestionService>();
 
 // Add DbContext
 builder.Services.AddDbContext<ApplicationDbContext>(options =>
@@ -34,9 +37,9 @@ builder.Services.AddIdentity<ApplicationUser, IdentityRole>()
 builder.Services.AddAuthentication();
 builder.Services.AddAuthorization();
 
-builder.Services.AddControllers(); 
+builder.Services.AddControllers();
 builder.Services.AddEndpointsApiExplorer();
-builder.Services.AddSwaggerGen(); 
+builder.Services.AddSwaggerGen();
 
 builder.Services.AddAuthentication(options =>
 {
@@ -69,7 +72,7 @@ if (app.Environment.IsDevelopment())
 
 
 app.UseHttpsRedirection();
-app.UseAuthentication(); // VAŽNO!
+app.UseAuthentication(); // VAÅ½NO!
 app.UseAuthorization();
 
 app.MapControllers();

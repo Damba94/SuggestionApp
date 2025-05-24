@@ -87,7 +87,7 @@ namespace SuggestionApp.Application.Services
                 roles[0]);
             //var refreshToken = GenerateRefreshToken();
 
-           //user.RefreshToken = refreshToken;
+            //user.RefreshToken = refreshToken;
             //user.RefreshTokenCreated = DateTime.UtcNow;
 
             //await _userService.UpdateUser(user);
@@ -120,7 +120,7 @@ namespace SuggestionApp.Application.Services
                 new(JwtRegisteredClaimNames.Sub, userId.ToString()),
                 new(ClaimTypes.Name, userName),
                 new(ClaimTypes.Email, email),
-                new(ClaimTypes.Role, userRole) 
+                new(ClaimTypes.Role, userRole)
 
             };
 
