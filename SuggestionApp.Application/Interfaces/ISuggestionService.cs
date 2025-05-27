@@ -5,6 +5,7 @@ namespace SuggestionApp.Application.Interfaces
 {
     public interface ISuggestionService
     {
+        Task<ChangeStatusS> ChangeStatus(ChangeSuggestionStatusDto changeSuggestionStatusDto);
         Task<CreateSuggestionStatus> CreateSugcgestion(CreateSuggestionDto createSuggestionDto);
     }
 }

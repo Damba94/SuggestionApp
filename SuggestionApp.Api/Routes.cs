@@ -32,6 +32,8 @@ namespace SuggestionApp.Api
             public const string GetAll = $"{_controllerBase}/getAll";
 
             public const string CreateSuggestion = $"{_controllerBase}";
+
+            public const string ChangeStatus= $"{_controllerBase}/status";
         }
 
 

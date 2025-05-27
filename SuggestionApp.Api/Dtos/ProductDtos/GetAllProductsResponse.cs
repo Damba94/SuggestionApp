@@ -1,4 +1,4 @@
-﻿using Riok.Mapperly.Abstractions;
+using Riok.Mapperly.Abstractions;
 using SuggestionApp.Application.Dtos.ProductService;
 
 namespace SuggestionApp.Api.Dtos.ProductDtos

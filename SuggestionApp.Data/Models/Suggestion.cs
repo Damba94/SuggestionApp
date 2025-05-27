@@ -14,6 +14,6 @@ namespace SuggestionApp.Data.Models
         public string Text { get; set; } = null!;
         public DateTime DateCreated { get; set; } = DateTime.UtcNow;
 
-        public SuggetionStatus Status { get; set; } = SuggetionStatus.UnderReview;
+        public SuggestionStatus Status { get; set; } = SuggestionStatus.UnderReview;
     }
 }

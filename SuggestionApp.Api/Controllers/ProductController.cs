@@ -1,6 +1,8 @@
+using FluentValidation;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using SuggestionApp.Api.Dtos.ProductDtos;
+using SuggestionApp.Application.Constants;
 using SuggestionApp.Application.Enums.Product;
 using SuggestionApp.Application.Interfaces;
 
@@ -10,13 +12,16 @@ namespace SuggestionApp.Api.Controllers
     public class ProductController : ControllerBase
     {
         private readonly IProductService _productService;
+        private readonly IValidator<CreateProductRequest> _createProductRequestValidator;
         public ProductController(
-            IProductService productService)
+            IProductService productService,
+            IValidator<CreateProductRequest> createProductRequestValidator)
         {
             _productService = productService;
+            _createProductRequestValidator = createProductRequestValidator;
         }
 
-        [Authorize(Roles = "USER,ADMIN")]
+        [Authorize(Roles = $"{Roles.User},{Roles.Admin}")]
         [HttpGet(Routes.Product.GetAllProducts)]
         public async Task<ActionResult<List<GetAllProductsResponse>>> GetAllProducts()
         {
@@ -29,11 +34,14 @@ namespace SuggestionApp.Api.Controllers
             return Ok(value);
         }
 
-        [Authorize(Roles = "ADMIN")]
+        [Authorize(Roles = Roles.Admin)]
         [HttpPost(Routes.Product.CreateProduct)]
         public async Task<ActionResult> CreateProduct(
-            CreateProductRequest createProductRequest)
+            [FromBody] CreateProductRequest createProductRequest)
         {
+            await _createProductRequestValidator
+                .ValidateAndThrowAsync(createProductRequest);
+
             var status = await _productService
                 .CreateProductAsync(createProductRequest.ToApplicationDto());
 

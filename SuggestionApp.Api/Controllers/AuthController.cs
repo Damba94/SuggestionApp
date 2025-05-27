@@ -1,6 +1,8 @@
-﻿using FluentValidation;
+using FluentValidation;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using SuggestionApp.Api.Dtos.AuthDtos;
+using SuggestionApp.Application.Constants;
 using SuggestionApp.Application.Enums;
 using SuggestionApp.Application.Interfaces;
 using SuggestionApp.Data.Enums;
@@ -25,8 +27,10 @@ namespace SuggestionApp.Api.Controllers
 
         }
 
+        [Authorize(Roles = Roles.Admin)]
         [HttpPost(Routes.Auth.Register)]
-        public async Task<ActionResult<RegisterResponse>> Register([FromBody] RegisterRequest registerRequest)
+        public async Task<ActionResult<RegisterResponse>> Register(
+            [FromBody] RegisterRequest registerRequest)
         {
             await _registerRequestValidator
                 .ValidateAndThrowAsync(registerRequest);

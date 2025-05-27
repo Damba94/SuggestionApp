@@ -1,6 +1,7 @@
 using Microsoft.AspNetCore.Identity;
 using Microsoft.Extensions.Configuration;
 using Microsoft.IdentityModel.Tokens;
+using SuggestionApp.Application.Constants;
 using SuggestionApp.Application.Dtos.IdentityService;
 using SuggestionApp.Application.Enums;
 using SuggestionApp.Application.Interfaces;
@@ -47,13 +48,13 @@ namespace SuggestionApp.Application.Services
                 return (RegistrationStatus.UnhandledError, null);
             }
 
-            await _userManager.AddToRoleAsync(newUser, "USER");
+            await _userManager.AddToRoleAsync(newUser, Roles.User);
 
             var jwt = GenerateJwt(
                 newUser.Id,
                 newUser.UserName,
                 newUser.Email,
-                "USER"
+                Roles.User
             );
 
             return (

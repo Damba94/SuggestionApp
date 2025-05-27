@@ -3,6 +3,7 @@ using SuggestionApp.Application.Dtos.SuggestionService;
 using SuggestionApp.Application.Enums.Suggestion;
 using SuggestionApp.Application.Interfaces;
 using SuggestionApp.Data.Context;
+using SuggestionApp.Data.Enums;
 using SuggestionApp.Data.Models;
 
 namespace SuggestionApp.Application.Services
@@ -42,6 +43,39 @@ namespace SuggestionApp.Application.Services
             {
                 return CreateSuggestionStatus.Failure;
             }
+        }
+
+        public async Task<ChangeStatusS>ChangeStatus(
+            ChangeSuggestionStatusDto changeSuggestionStatusDto)
+        {
+            var suggestion = await _context.Suggestions
+                .FindAsync(changeSuggestionStatusDto.SuggestionId);
+
+            if(suggestion is null){
+                return ChangeStatusS.SuggestionNotFound;
+            }
+
+            if (Enum.IsDefined(typeof(SuggestionStatus), changeSuggestionStatusDto.Status))
+            {
+                var status = (SuggestionStatus)changeSuggestionStatusDto.Status;
+
+                try
+                {
+                    suggestion.Status = status;
+                    await _context.SaveChangesAsync();
+                    return ChangeStatusS.Success;
+                }
+                catch
+                {
+                    return ChangeStatusS.Failure;
+                }
+            }
+            else
+            {
+                return ChangeStatusS.InvalidStatus;
+            }
+
+
         }
     }
 }

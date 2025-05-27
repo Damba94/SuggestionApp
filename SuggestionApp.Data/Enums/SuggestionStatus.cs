@@ -1,6 +1,6 @@
 ﻿namespace SuggestionApp.Data.Enums
 {
-    public enum SuggetionStatus
+    public enum SuggestionStatus
     {
         Rejected = 0,
         UnderReview = 1,

@@ -1,8 +1,9 @@
+using FluentValidation;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using SuggestionApp.Api.Dtos.SuggestionDtos;
 using SuggestionApp.Api.Extensions;
-using SuggestionApp.Application.Enums.Product;
+using SuggestionApp.Application.Constants;
 using SuggestionApp.Application.Enums.Suggestion;
 using SuggestionApp.Application.Interfaces;
 
@@ -12,16 +13,23 @@ namespace SuggestionApp.Api.Controllers
     public class SuggestionController : ControllerBase
     {
         private readonly ISuggestionService _suggestionService;
-        public SuggestionController(ISuggestionService suggestionService)
+        private readonly IValidator<CreateSuggestionRequest> _createSuggestionRequestValidator;
+        public SuggestionController(
+            ISuggestionService suggestionService,
+            IValidator<CreateSuggestionRequest> createSuggestionRequestValidator)
         {
             _suggestionService = suggestionService;
+            _createSuggestionRequestValidator = createSuggestionRequestValidator;
         }
 
-        [Authorize(Roles = "USER,ADMIN")]
+        [Authorize(Roles = $"{Roles.User},{Roles.Admin}")]
         [HttpPost(Routes.Suggestion.CreateSuggestion)]
         public async Task<ActionResult> CreateSuggestion(
-            CreateSuggestionRequest createSuggestionRequest)
+            [FromBody] CreateSuggestionRequest createSuggestionRequest)
         {
+            await _createSuggestionRequestValidator
+                .ValidateAndThrowAsync(createSuggestionRequest);
+
             var mappedRequest = createSuggestionRequest
                 .ToApplicationDto(User.GetUserId());
 
@@ -35,5 +43,25 @@ namespace SuggestionApp.Api.Controllers
                 _ => StatusCode(500, "Unknown error.")
             };
         }
+
+        [Authorize(Roles=Roles.Admin)]
+        [HttpPatch(Routes.Suggestion.ChangeStatus)]
+        public async Task <ActionResult>ChangeStatus(
+            [FromBody] ChangeSuggestionStatusRequest changeSuggestionStatusRequest)
+        {
+            var status=await _suggestionService
+                .ChangeStatus(changeSuggestionStatusRequest.ToApplicationDto());
+
+            return status switch
+            {
+                ChangeStatusS.Success => Ok("Suggestion status changed successfully."),
+                ChangeStatusS.SuggestionNotFound => NotFound("Suggestion not found."),
+                ChangeStatusS.InvalidStatus => BadRequest("Invalid status provided."),
+                ChangeStatusS.Failure => StatusCode(500, "An error occurred while changing the suggestion status."),
+                _ => StatusCode(500, "Unknown error.")
+            };
+        }
+
+
     }
 }
