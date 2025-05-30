@@ -14,22 +14,24 @@ using System.Windows.Forms;
 
 namespace SuggestionApp.Frontend.Forms
 {
-    public partial class LoginForm : Form
+    public partial class AddUserForm : Form
     {
-        public LoginForm()
+        public AddUserForm()
         {
             InitializeComponent();
         }
 
-
-        private async void LoginButtn_Click(object sender, EventArgs e)
+        private async void submitUserButton_Click(object sender, EventArgs e)
         {
             var baseUrl = Properties.Settings.Default.ApiBaseUrl;
 
-            var payload = new LoginRequest
+            var payload = new RegisterRequest
             {
                 UserName = txtUsername.Text,
-                Password = txtPassword.Text,    
+                Password = txtPassword.Text,
+                FirstName = txtFirstName.Text,
+                LastName = txtLastName.Text,
+                Email = txtEmail.Text,
             };
 
             using var client = new HttpClient();
@@ -39,21 +41,18 @@ namespace SuggestionApp.Frontend.Forms
 
             try
             {
-                var response = await client.PostAsync($"{baseUrl}/auth/login", content);
+                var response = await client.PostAsync($"{baseUrl}/auth/register", content);
 
                 if (response.IsSuccessStatusCode)
                 {
                     var responseContent = await response.Content.ReadAsStringAsync();
-                    var loginResponse = JsonConvert.DeserializeObject<LoginResponse>(responseContent);
+                    var registerResponse = JsonConvert.DeserializeObject<RegisterResponse>(responseContent);
 
                     var handler = new JwtSecurityTokenHandler();
-                    var jwtToken = handler.ReadJwtToken(loginResponse.Jwt);
+                    var jwtToken = handler.ReadJwtToken(registerResponse.Jwt);
                     var role = jwtToken.Claims.FirstOrDefault(c => c.Type == "role")?.Value;
 
-                    SessionStorage.Token = loginResponse.Jwt;
-                    SessionStorage.Role = role;
-
-                    MessageBox.Show("Login successful!");
+                    MessageBox.Show("Korisnik je dodan!");
 
                     var mainForm = new MainForm();
                     mainForm.Show();
@@ -62,7 +61,7 @@ namespace SuggestionApp.Frontend.Forms
                 else
                 {
                     var errorContent = await response.Content.ReadAsStringAsync();
-                    MessageBox.Show($"Login failed: {errorContent}");
+                    MessageBox.Show($"neuspješno : {errorContent}");
                 }
             }
             catch (Exception ex)
@@ -70,6 +69,5 @@ namespace SuggestionApp.Frontend.Forms
                 MessageBox.Show($"Error: {ex.Message}");
             }
         }
-
     }
 }

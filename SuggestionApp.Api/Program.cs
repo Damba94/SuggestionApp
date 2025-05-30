@@ -4,6 +4,7 @@ using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.IdentityModel.Tokens;
 using SuggestionApp.Api.Dtos.AuthDtos;
+using SuggestionApp.Api.Dtos.ProductDtos;
 using SuggestionApp.Api.Dtos.SuggestionDtos;
 using SuggestionApp.Api.Validators;
 using SuggestionApp.Application.Interfaces;
@@ -18,6 +19,7 @@ builder.Configuration.AddJsonFile("appsettings.json", optional: false, reloadOnC
 builder.Services.AddScoped<IValidator<RegisterRequest>, RegisterRequestValidator>();
 builder.Services.AddScoped<IValidator<LoginRequest>, LoginRequestValidator>();
 builder.Services.AddScoped<IValidator<CreateSuggestionRequest>, CreateSuggestionValidator>();
+builder.Services.AddScoped<IValidator<CreateProductRequest>, CreateProductRequestValidator>();
 // Add Services
 builder.Services.AddScoped<IIdentityService, IdentityService>();
 builder.Services.AddScoped<IProductService, ProductService>();

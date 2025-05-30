@@ -1,4 +1,4 @@
-﻿namespace SuggestionApp.Frontend.Forms
+namespace SuggestionApp.Frontend.Forms
 {
     partial class LoginForm
     {
@@ -43,7 +43,6 @@
             label1.Size = new Size(91, 25);
             label1.TabIndex = 0;
             label1.Text = "Username";
-            label1.Click += label1_Click;
             // 
             // label2
             // 
@@ -91,7 +90,6 @@
             Controls.Add(label1);
             Name = "LoginForm";
             Text = "LoginForm";
-            Load += LoginForm_Load;
             ResumeLayout(false);
             PerformLayout();
         }
