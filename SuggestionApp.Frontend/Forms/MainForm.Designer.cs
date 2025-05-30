@@ -84,6 +84,7 @@ namespace SuggestionApp.Frontend.Forms
             addProductButton.TabIndex = 4;
             addProductButton.Text = "Dodaj proizvod";
             addProductButton.UseVisualStyleBackColor = true;
+            addProductButton.Click += addProductButton_Click;
             // 
             // MainForm
             // 

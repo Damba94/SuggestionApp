@@ -85,8 +85,14 @@ namespace SuggestionApp.Frontend.Forms
 
         private void addUserButton_Click(object sender, EventArgs e)
         {
-            var addUserFormn=new AddUserForm();
+            var addUserFormn = new AddUserForm();
             addUserFormn.ShowDialog();
+        }
+
+        private void addProductButton_Click(object sender, EventArgs e)
+        {
+            var addProductForm=new AddProductForm();
+            addProductForm.ShowDialog();
         }
     }
 
