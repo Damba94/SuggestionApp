@@ -1,17 +1,7 @@
 using Newtonsoft.Json;
 using SuggestionApp.Api.Dtos.ProductDtos;
 using SuggestionApp.Frontend.Helpers;
-using System;
-using System.Collections.Generic;
-using System.ComponentModel;
-using System.Data;
-using System.Drawing;
-using System.Linq;
 using System.Net.Http.Headers;
-using System.Text;
-using System.Threading.Tasks;
-using System.Windows.Forms;
-using System.IdentityModel.Tokens.Jwt;
 
 namespace SuggestionApp.Frontend.Forms
 {
@@ -91,7 +81,7 @@ namespace SuggestionApp.Frontend.Forms
 
         private void addProductButton_Click(object sender, EventArgs e)
         {
-            var addProductForm=new AddProductForm();
+            var addProductForm = new AddProductForm();
             addProductForm.ShowDialog();
         }
     }

@@ -44,12 +44,12 @@ namespace SuggestionApp.Api.Controllers
             };
         }
 
-        [Authorize(Roles=Roles.Admin)]
+        [Authorize(Roles = Roles.Admin)]
         [HttpPatch(Routes.Suggestion.ChangeStatus)]
-        public async Task <ActionResult>ChangeStatus(
+        public async Task<ActionResult> ChangeStatus(
             [FromBody] ChangeSuggestionStatusRequest changeSuggestionStatusRequest)
         {
-            var status=await _suggestionService
+            var status = await _suggestionService
                 .ChangeStatus(changeSuggestionStatusRequest.ToApplicationDto());
 
             return status switch
@@ -62,6 +62,44 @@ namespace SuggestionApp.Api.Controllers
             };
         }
 
+        [Authorize(Roles = Roles.Admin)]
+        [HttpGet(Routes.Suggestion.SuggestionsByUser)]
+
+        public async Task<ActionResult<List<GetAllSuggestionsByUserIdResponse>>>SuggestionsByUser(
+            [FromBody]GetAllSuggestionsByUserIdRequest getAllSuggestionsByUserIdRequest)
+        {
+           var (status,value)= await _suggestionService
+                .GetAllSuggestionsByUser(getAllSuggestionsByUserIdRequest.UserId);
+
+            return status switch
+            {
+                GetAllSuggestionsByUserIdStatus.Success => Ok(value),
+                GetAllSuggestionsByUserIdStatus.UserNotFound => NotFound("User not found."),
+                GetAllSuggestionsByUserIdStatus.Failure => StatusCode(500, "An error occurred."),
+                _ => StatusCode(500, "Unknown error.")
+            };
+        }
+
+        [Authorize (Roles = $"{Roles.User},{Roles.Admin}")]
+        [HttpGet(Routes.Suggestion.MySuggestions)]
+        public async Task<ActionResult<List<GetAllSuggestionsByUserIdResponse>>> GetMySuggestions()
+        {
+            string userId=User.GetUserId();
+
+            if (userId is null)
+                return BadRequest();
+
+            var (status, value) = await _suggestionService
+                .GetAllSuggestionsByUser(userId);
+
+            return status switch
+            {
+                GetAllSuggestionsByUserIdStatus.Success => Ok(value),
+                GetAllSuggestionsByUserIdStatus.Failure => StatusCode(500, "An error occurred."),
+                _ => StatusCode(500, "Unknown error.")
+            };
+
+        }
 
     }
 }

@@ -1,4 +1,5 @@
 using Microsoft.EntityFrameworkCore;
+using Microsoft.Identity.Client;
 using SuggestionApp.Application.Dtos.SuggestionService;
 using SuggestionApp.Application.Enums.Suggestion;
 using SuggestionApp.Application.Interfaces;
@@ -45,13 +46,14 @@ namespace SuggestionApp.Application.Services
             }
         }
 
-        public async Task<ChangeStatusS>ChangeStatus(
+        public async Task<ChangeStatusS> ChangeStatus(
             ChangeSuggestionStatusDto changeSuggestionStatusDto)
         {
             var suggestion = await _context.Suggestions
                 .FindAsync(changeSuggestionStatusDto.SuggestionId);
 
-            if(suggestion is null){
+            if (suggestion is null)
+            {
                 return ChangeStatusS.SuggestionNotFound;
             }
 
@@ -74,8 +76,39 @@ namespace SuggestionApp.Application.Services
             {
                 return ChangeStatusS.InvalidStatus;
             }
+        }
 
+        public async Task<(GetAllSuggestionsByUserIdStatus Status,List<GetAllSuggestionsByUserIdResult>? Value)>GetAllSuggestionsByUser(
+            string userId)
+        {
+            var user= await _context.Users
+                .FindAsync(userId);
 
+            if (user is null)
+            {
+                return (GetAllSuggestionsByUserIdStatus.UserNotFound,null);
+            }
+
+            try
+            {
+                var suggestion=await _context.Suggestions
+                    .AsNoTracking()
+                    .Where(s=>s.User==user)
+                    .Select(s => new GetAllSuggestionsByUserIdResult
+                    {
+                        Status = s.Status,
+                        SuggestionId=s.Id,
+                        ProductName=s.Product.Name,
+                        DateCreated=s.DateCreated
+                    })
+                    .ToListAsync();
+
+                return (GetAllSuggestionsByUserIdStatus.Success, suggestion);
+                       
+            }
+            catch {
+                return (GetAllSuggestionsByUserIdStatus.Failure,null);
+            }
         }
     }
 }

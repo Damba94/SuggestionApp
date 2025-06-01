@@ -1,16 +1,8 @@
 using Newtonsoft.Json;
 using SuggestionApp.Api.Dtos.AuthDtos;
 using SuggestionApp.Frontend.Helpers;
-using System;
-using System.Collections.Generic;
-using System.ComponentModel;
-using System.Data;
-using System.Drawing;
 using System.IdentityModel.Tokens.Jwt;
-using System.Linq;
 using System.Text;
-using System.Threading.Tasks;
-using System.Windows.Forms;
 
 namespace SuggestionApp.Frontend.Forms
 {
@@ -29,7 +21,7 @@ namespace SuggestionApp.Frontend.Forms
             var payload = new LoginRequest
             {
                 UserName = txtUsername.Text,
-                Password = txtPassword.Text,    
+                Password = txtPassword.Text,
             };
 
             using var client = new HttpClient();
