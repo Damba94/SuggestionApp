@@ -33,16 +33,23 @@ namespace SuggestionApp.Frontend.Forms
             createSuggestionButton = new Button();
             addUserButton = new Button();
             addProductButton = new Button();
+            mySuggestionsButton = new Button();
+            comboBoxUsers = new ComboBox();
+            getSuggestionsByIdButton = new Button();
+            getAllSuggestions = new Button();
+            dateTimePicker1 = new DateTimePicker();
+            enumCombobox = new ComboBox();
+            useDateCheckbox = new CheckBox();
             ((System.ComponentModel.ISupportInitialize)dataGridViewProducts).BeginInit();
             SuspendLayout();
             // 
             // dataGridViewProducts
             // 
             dataGridViewProducts.ColumnHeadersHeightSizeMode = DataGridViewColumnHeadersHeightSizeMode.AutoSize;
-            dataGridViewProducts.Location = new Point(21, 147);
+            dataGridViewProducts.Location = new Point(52, 250);
             dataGridViewProducts.Name = "dataGridViewProducts";
             dataGridViewProducts.RowHeadersWidth = 62;
-            dataGridViewProducts.Size = new Size(427, 265);
+            dataGridViewProducts.Size = new Size(645, 333);
             dataGridViewProducts.TabIndex = 0;
             // 
             // getProductsButton
@@ -86,11 +93,82 @@ namespace SuggestionApp.Frontend.Forms
             addProductButton.UseVisualStyleBackColor = true;
             addProductButton.Click += addProductButton_Click;
             // 
+            // mySuggestionsButton
+            // 
+            mySuggestionsButton.Location = new Point(236, 36);
+            mySuggestionsButton.Name = "mySuggestionsButton";
+            mySuggestionsButton.Size = new Size(212, 34);
+            mySuggestionsButton.TabIndex = 5;
+            mySuggestionsButton.Text = "Moji prijedlozi";
+            mySuggestionsButton.UseVisualStyleBackColor = true;
+            mySuggestionsButton.Click += mySuggestionsButton_Click;
+            // 
+            // comboBoxUsers
+            // 
+            comboBoxUsers.FormattingEnabled = true;
+            comboBoxUsers.Location = new Point(863, 235);
+            comboBoxUsers.Name = "comboBoxUsers";
+            comboBoxUsers.Size = new Size(182, 33);
+            comboBoxUsers.TabIndex = 6;
+            comboBoxUsers.SelectedIndexChanged += comboBox1_SelectedIndexChanged;
+            // 
+            // getSuggestionsByIdButton
+            // 
+            getSuggestionsByIdButton.Location = new Point(1129, 233);
+            getSuggestionsByIdButton.Name = "getSuggestionsByIdButton";
+            getSuggestionsByIdButton.Size = new Size(235, 34);
+            getSuggestionsByIdButton.TabIndex = 8;
+            getSuggestionsByIdButton.Text = "filtriraj";
+            getSuggestionsByIdButton.UseVisualStyleBackColor = true;
+            getSuggestionsByIdButton.Click += getSuggestionsByIdButton_Click;
+            // 
+            // getAllSuggestions
+            // 
+            getAllSuggestions.Location = new Point(1129, 169);
+            getAllSuggestions.Name = "getAllSuggestions";
+            getAllSuggestions.Size = new Size(191, 34);
+            getAllSuggestions.TabIndex = 9;
+            getAllSuggestions.Text = "Svi prijedlozi";
+            getAllSuggestions.UseVisualStyleBackColor = true;
+            getAllSuggestions.Click += getAllSuggestions_Click;
+            // 
+            // dateTimePicker1
+            // 
+            dateTimePicker1.Location = new Point(745, 307);
+            dateTimePicker1.Name = "dateTimePicker1";
+            dateTimePicker1.Size = new Size(300, 31);
+            dateTimePicker1.TabIndex = 10;
+            // 
+            // enumCombobox
+            // 
+            enumCombobox.FormattingEnabled = true;
+            enumCombobox.Location = new Point(863, 369);
+            enumCombobox.Name = "enumCombobox";
+            enumCombobox.Size = new Size(182, 33);
+            enumCombobox.TabIndex = 11;
+            // 
+            // useDateCheckbox
+            // 
+            useDateCheckbox.AutoSize = true;
+            useDateCheckbox.Location = new Point(1119, 311);
+            useDateCheckbox.Name = "useDateCheckbox";
+            useDateCheckbox.Size = new Size(143, 29);
+            useDateCheckbox.TabIndex = 13;
+            useDateCheckbox.Text = "koristi datum";
+            useDateCheckbox.UseVisualStyleBackColor = true;
+            // 
             // MainForm
             // 
             AutoScaleDimensions = new SizeF(10F, 25F);
             AutoScaleMode = AutoScaleMode.Font;
-            ClientSize = new Size(1141, 626);
+            ClientSize = new Size(1411, 667);
+            Controls.Add(useDateCheckbox);
+            Controls.Add(enumCombobox);
+            Controls.Add(dateTimePicker1);
+            Controls.Add(getAllSuggestions);
+            Controls.Add(getSuggestionsByIdButton);
+            Controls.Add(comboBoxUsers);
+            Controls.Add(mySuggestionsButton);
             Controls.Add(addProductButton);
             Controls.Add(addUserButton);
             Controls.Add(createSuggestionButton);
@@ -101,6 +179,7 @@ namespace SuggestionApp.Frontend.Forms
             Load += MainForm_Load;
             ((System.ComponentModel.ISupportInitialize)dataGridViewProducts).EndInit();
             ResumeLayout(false);
+            PerformLayout();
         }
 
         #endregion
@@ -110,5 +189,12 @@ namespace SuggestionApp.Frontend.Forms
         private Button createSuggestionButton;
         private Button addUserButton;
         private Button addProductButton;
+        private Button mySuggestionsButton;
+        private ComboBox comboBoxUsers;
+        private Button getSuggestionsByIdButton;
+        private Button getAllSuggestions;
+        private DateTimePicker dateTimePicker1;
+        private ComboBox enumCombobox;
+        private CheckBox useDateCheckbox;
     }
 }

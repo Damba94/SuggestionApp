@@ -1,5 +1,5 @@
+using Azure.Core;
 using Microsoft.EntityFrameworkCore;
-using Microsoft.Identity.Client;
 using SuggestionApp.Application.Dtos.SuggestionService;
 using SuggestionApp.Application.Enums.Suggestion;
 using SuggestionApp.Application.Interfaces;
@@ -78,37 +78,116 @@ namespace SuggestionApp.Application.Services
             }
         }
 
-        public async Task<(GetAllSuggestionsByUserIdStatus Status,List<GetAllSuggestionsByUserIdResult>? Value)>GetAllSuggestionsByUser(
-            string userId)
+        public async Task<(GetAllSuggestionsByUserIdStatus Status, List<GetAllSuggestionsByUserIdResult>? Value)> GetAllSuggestionsByFilter(
+            GetFilterSuggestionDto getFilterSuggestionDto)
         {
-            var user= await _context.Users
-                .FindAsync(userId);
-
-            if (user is null)
-            {
-                return (GetAllSuggestionsByUserIdStatus.UserNotFound,null);
-            }
-
             try
             {
-                var suggestion=await _context.Suggestions
+                if (!string.IsNullOrEmpty(getFilterSuggestionDto.UserId))
+                {
+                    var userExists = await _context.Users.AnyAsync(u => u.Id == getFilterSuggestionDto.UserId);
+                    if (!userExists)
+                        return (GetAllSuggestionsByUserIdStatus.UserNotFound, null);
+                }
+
+                var query = _context.Suggestions
                     .AsNoTracking()
-                    .Where(s=>s.User==user)
+                    .Include(s => s.Product)
+                    .AsQueryable();
+
+                if (!string.IsNullOrEmpty(getFilterSuggestionDto.UserId))
+                    query = query.Where(s => s.UserId == getFilterSuggestionDto.UserId);
+
+                if (!string.IsNullOrEmpty(getFilterSuggestionDto.SuggestionId) &&
+                    int.TryParse(getFilterSuggestionDto.SuggestionId, out var suggestionId))
+                {
+                    query = query.Where(s => s.Id == suggestionId);
+                }
+
+
+                if (getFilterSuggestionDto.Status.HasValue)
+                    query = query.Where(s => s.Status == getFilterSuggestionDto.Status);
+
+                if (getFilterSuggestionDto.Date.HasValue)
+                    query = query.Where(s => DateOnly.FromDateTime(s.DateCreated.Date) == getFilterSuggestionDto.Date.Value);
+
+                var results = await query
                     .Select(s => new GetAllSuggestionsByUserIdResult
                     {
                         Status = s.Status,
-                        SuggestionId=s.Id,
-                        ProductName=s.Product.Name,
-                        DateCreated=s.DateCreated
+                        SuggestionId = s.Id,
+                        ProductName = s.Product.Name,
+                        DateCreated = s.DateCreated
+                    })
+                    .ToListAsync();
+
+                return (GetAllSuggestionsByUserIdStatus.Success, results);
+            }
+            catch
+            {
+                return (GetAllSuggestionsByUserIdStatus.Failure, null);
+            }
+        }
+
+        public async Task<(GetAllSuggestionsByUserIdStatus Status, List<GetAllSuggestionsResult>? Value)> GetAllSuggestions()
+        {
+            try
+            {
+                var suggestion = await _context.Suggestions
+                    .AsNoTracking()
+                    .Select(s => new GetAllSuggestionsResult
+                    {
+                        Status = s.Status,
+                        SuggestionId = s.Id,
+                        FirstName=s.User.FirstName,
+                        LastName=s.User.LastName,
+                        ProductName = s.Product.Name,
+                        DateCreated = s.DateCreated
                     })
                     .ToListAsync();
 
                 return (GetAllSuggestionsByUserIdStatus.Success, suggestion);
-                       
+
             }
-            catch {
-                return (GetAllSuggestionsByUserIdStatus.Failure,null);
+            catch
+            {
+                return (GetAllSuggestionsByUserIdStatus.Failure, null);
+            }
+        }
+
+        public async Task<(GetAllSuggestionsByUserIdStatus Status, List<GetAllSuggestionsByUserIdResult>? Value)> GetAllSuggestionsByUser(
+            string userId)
+        {
+            var user = await _context.Users
+                .FindAsync(userId);
+
+            if (user is null)
+            {
+                return (GetAllSuggestionsByUserIdStatus.UserNotFound, null);
+            }
+
+            try
+            {
+                var suggestion = await _context.Suggestions
+                    .AsNoTracking()
+                    .Where(s => s.User == user)
+                    .Select(s => new GetAllSuggestionsByUserIdResult
+                    {
+                        Status = s.Status,
+                        SuggestionId = s.Id,
+                        ProductName = s.Product.Name,
+                        DateCreated = s.DateCreated
+                    })
+                    .ToListAsync();
+
+                return (GetAllSuggestionsByUserIdStatus.Success, suggestion);
+
+            }
+            catch
+            {
+                return (GetAllSuggestionsByUserIdStatus.Failure, null);
             }
         }
     }
 }
+

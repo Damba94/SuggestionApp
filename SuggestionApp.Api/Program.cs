@@ -24,6 +24,7 @@ builder.Services.AddScoped<IValidator<CreateProductRequest>, CreateProductReques
 builder.Services.AddScoped<IIdentityService, IdentityService>();
 builder.Services.AddScoped<IProductService, ProductService>();
 builder.Services.AddScoped<ISuggestionService, SuggestionService>();
+builder.Services.AddScoped<IUserService, UserService>();
 
 // Add DbContext
 builder.Services.AddDbContext<ApplicationDbContext>(options =>

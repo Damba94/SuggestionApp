@@ -35,9 +35,17 @@ namespace SuggestionApp.Api
 
             public const string ChangeStatus = $"{_controllerBase}/status";
 
-            public const string SuggestionsByUser = $"{_controllerBase}/byUser";
+            public const string FilterSuggestions = $"{_controllerBase}/filter";
 
             public const string MySuggestions = $"{_controllerBase}/mySuggestions";
+        }
+
+        public static class User
+        {
+            private const string _controllerBase = $"{_base}/user";
+
+            public const string GetAllUsers = $"{_controllerBase}/getAll";
+
         }
 
 

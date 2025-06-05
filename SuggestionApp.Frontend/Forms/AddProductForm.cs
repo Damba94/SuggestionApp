@@ -30,13 +30,13 @@ namespace SuggestionApp.Frontend.Forms
 
             try
             {
-                var response = await client.PostAsync($"{baseUrl}/auth/register", content);
+                var response = await client.PostAsync($"{baseUrl}/product", content);
 
                 if (response.IsSuccessStatusCode)
                 {
                     var responseContent = await response.Content.ReadAsStringAsync();
 
-                    MessageBox.Show("Korisnik je dodan!");
+                    MessageBox.Show("Proizvod je dodan!");
                     this.Hide();
                 }
                 else

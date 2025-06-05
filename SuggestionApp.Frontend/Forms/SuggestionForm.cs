@@ -37,7 +37,7 @@ namespace SuggestionApp.Frontend.Forms
             var json = JsonConvert.SerializeObject(suggestionRequest);
             var content = new StringContent(json, Encoding.UTF8, "application/json");
 
-            var response = await client.PostAsync($"{baseUrl}//suggestion", content);
+            var response = await client.PostAsync($"{baseUrl}/suggestion", content);
 
             if (response.IsSuccessStatusCode)
             {

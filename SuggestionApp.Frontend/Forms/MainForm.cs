@@ -1,7 +1,12 @@
 using Newtonsoft.Json;
 using SuggestionApp.Api.Dtos.ProductDtos;
+using SuggestionApp.Api.Dtos.SuggestionDtos;
+using SuggestionApp.Frontend.Dtos.SuggestionDtos;
+using SuggestionApp.Frontend.Dtos.User;
 using SuggestionApp.Frontend.Helpers;
 using System.Net.Http.Headers;
+using System.Web;
+using System.Windows.Forms.VisualStyles;
 
 namespace SuggestionApp.Frontend.Forms
 {
@@ -16,9 +21,13 @@ namespace SuggestionApp.Frontend.Forms
             string currentRole = SessionStorage.Role;
 
             UiHelper.SetButtonVisibility(getProductsButton, currentRole, "ADMIN", "USER");
-            UiHelper.SetButtonVisibility(createSuggestionButton, currentRole, "ADMIN", "USER");
+            UiHelper.SetButtonVisibility(createSuggestionButton, currentRole, "USER");
             UiHelper.SetButtonVisibility(addProductButton, currentRole, "ADMIN");
             UiHelper.SetButtonVisibility(addUserButton, currentRole, "ADMIN");
+            UiHelper.SetButtonVisibility(mySuggestionsButton, currentRole, "USER");
+
+            LoadUsersIntoComboBox();
+            LoadStatusIntoCobobox();
         }
         private async void getProductsButton_Click(object sender, EventArgs e)
         {
@@ -57,6 +66,34 @@ namespace SuggestionApp.Frontend.Forms
             dataGridViewProducts.Columns["Id"].Visible = false;
         }
 
+        private void LoadSuggestionsByUser(List<GetAllSuggestionsByUserIdResponse> suggestions)
+        {
+            dataGridViewProducts.DataSource = suggestions;
+
+            dataGridViewProducts.ReadOnly = true;
+            dataGridViewProducts.AllowUserToAddRows = false;
+            dataGridViewProducts.AllowUserToDeleteRows = false;
+
+            dataGridViewProducts.SelectionMode = DataGridViewSelectionMode.FullRowSelect;
+            dataGridViewProducts.MultiSelect = false;
+
+            dataGridViewProducts.Columns["SuggestionId"].Visible = false;
+        }
+
+        private void LoadSuggestions(List<GetAllSuggestionResponse> suggestions)
+        {
+            dataGridViewProducts.DataSource = suggestions;
+
+            dataGridViewProducts.ReadOnly = true;
+            dataGridViewProducts.AllowUserToAddRows = false;
+            dataGridViewProducts.AllowUserToDeleteRows = false;
+
+            dataGridViewProducts.SelectionMode = DataGridViewSelectionMode.FullRowSelect;
+            dataGridViewProducts.MultiSelect = false;
+
+            dataGridViewProducts.Columns["SuggestionId"].Visible = false;
+        }
+
         private void createSuggestionButton_Click(object sender, EventArgs e)
         {
             if (dataGridViewProducts.SelectedRows.Count == 0)
@@ -83,6 +120,179 @@ namespace SuggestionApp.Frontend.Forms
         {
             var addProductForm = new AddProductForm();
             addProductForm.ShowDialog();
+        }
+
+        private async void mySuggestionsButton_Click(object sender, EventArgs e)
+        {
+            var baseUrl = Properties.Settings.Default.ApiBaseUrl;
+            var token = SessionStorage.Token;
+
+            using var client = new HttpClient();
+            client.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("Bearer", token);
+
+            var response = await client.GetAsync($"{baseUrl}/suggestion/mySuggestions");
+
+            if (response.IsSuccessStatusCode)
+            {
+                var json = await response.Content.ReadAsStringAsync();
+                var suggestions = JsonConvert.DeserializeObject<List<GetAllSuggestionsByUserIdResponse>>(json);
+
+                LoadSuggestionsByUser(suggestions);
+            }
+            else
+            {
+                MessageBox.Show("neuspjelo: " + response.StatusCode);
+            }
+        }
+
+        private void comboBox1_SelectedIndexChanged(object sender, EventArgs e)
+        {
+
+        }
+
+        private async Task LoadUsersIntoComboBox()
+        {
+            var baseUrl = Properties.Settings.Default.ApiBaseUrl;
+            var token = SessionStorage.Token;
+
+            using var client = new HttpClient();
+            client.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("Bearer", token);
+
+            var response = await client.GetAsync($"{baseUrl}/user/getAll");
+
+            if (response.IsSuccessStatusCode)
+            {
+                var json = await response.Content.ReadAsStringAsync();
+                var users = JsonConvert.DeserializeObject<List<GetAllUsersResult>>(json);
+
+                users.Insert(0, new GetAllUsersResult
+                {
+                    UserId = null,
+                    FirstName = "Odaberi",
+                    LastName = ""
+                });
+
+                var displayList = users
+                   .Select(u => new
+                   {
+                       UserId = u.UserId,
+                       FullName = $"{u.FirstName} {u.LastName}"
+                   })
+                    .ToList();
+
+                comboBoxUsers.DataSource = displayList;
+                comboBoxUsers.DisplayMember = "FullName";
+                comboBoxUsers.ValueMember = "UserId";
+            }
+            else
+            {
+                MessageBox.Show("Failed to load users: " + response.StatusCode);
+            }
+        }
+        public void LoadStatusIntoCobobox()
+        {
+            var items = new List<SuggestionStatusComboBox>
+            {
+                new SuggestionStatusComboBox { Text = "— Odaberi —", Value = null } 
+            };
+
+            items.AddRange(Enum.GetValues(typeof(SuggestionStatus))
+                .Cast<SuggestionStatus>()
+                .Select(status => new SuggestionStatusComboBox
+                {
+                    Text = status.ToString(), 
+                    Value = status
+                }));
+
+            enumCombobox.DataSource = items;
+            enumCombobox.DisplayMember = "Text";
+            enumCombobox.ValueMember = "Value";
+
+        }
+
+        private async void getSuggestionsByIdButton_Click(object sender, EventArgs e)
+        {
+            var selectedUserId = comboBoxUsers.SelectedValue?.ToString();
+
+            var selectidStatus = enumCombobox.SelectedValue?.ToString();
+
+            string? productId = null;
+
+            if (dataGridViewProducts.SelectedRows.Count > 0)
+            {
+                var selectedRow = dataGridViewProducts.SelectedRows[0];
+                var product = (GetAllProductsResponse)selectedRow.DataBoundItem;
+                productId = product.Id.ToString();
+            }
+
+            if (useDateCheckbox.Checked)
+            {
+                var date = dateTimePicker1;
+            }
+
+            var query = HttpUtility.ParseQueryString(string.Empty);
+
+            if (!string.IsNullOrWhiteSpace(selectedUserId))
+                query["userId"] = selectedUserId;
+
+            if (!string.IsNullOrWhiteSpace(selectidStatus))
+                query["status"] = selectidStatus;
+
+            if (productId != null)
+                query["productId"] = productId;
+
+            if (useDateCheckbox.Checked)
+                query["date"] = dateTimePicker1.Value.ToString("yyyy-MM-dd");
+
+
+            var baseUrl = Properties.Settings.Default.ApiBaseUrl;
+            var token = SessionStorage.Token;
+
+            var uriBuilder = new UriBuilder($"{baseUrl}/suggestion/filter")
+            {
+                Query = query.ToString()
+            };
+
+            using var client = new HttpClient();
+            client.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("Bearer", token);
+
+            var response = await client.GetAsync(uriBuilder.ToString());
+
+            if (response.IsSuccessStatusCode)
+            {
+                var json = await response.Content.ReadAsStringAsync();
+                var suggestions = JsonConvert.DeserializeObject<List<GetAllSuggestionsByUserIdResponse>>(json);
+
+                LoadSuggestionsByUser(suggestions);
+            }
+            else
+            {
+                MessageBox.Show("neuspjelo: " + response.StatusCode);
+            }
+
+        }
+
+        private async void getAllSuggestions_Click(object sender, EventArgs e)
+        {
+            var baseUrl = Properties.Settings.Default.ApiBaseUrl;
+            var token = SessionStorage.Token;
+
+            using var client = new HttpClient();
+            client.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("Bearer", token);
+
+            var response = await client.GetAsync($"{baseUrl}/suggestion/getAll");
+
+            if (response.IsSuccessStatusCode)
+            {
+                var json = await response.Content.ReadAsStringAsync();
+                var suggestions = JsonConvert.DeserializeObject<List<GetAllSuggestionResponse>>(json);
+
+                LoadSuggestions(suggestions);
+            }
+            else
+            {
+                MessageBox.Show("neuspjelo: " + response.StatusCode);
+            }
         }
     }
 

@@ -9,7 +9,7 @@ namespace SuggestionApp.Api.Validators
         {
             RuleFor(x => x.Name)
                 .NotEmpty()
-                .MinimumLength(10);
+                .MinimumLength(3);
         }
     }
 }

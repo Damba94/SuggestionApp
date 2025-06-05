@@ -4,6 +4,7 @@ using Microsoft.AspNetCore.Mvc;
 using SuggestionApp.Api.Dtos.SuggestionDtos;
 using SuggestionApp.Api.Extensions;
 using SuggestionApp.Application.Constants;
+using SuggestionApp.Application.Dtos.SuggestionService;
 using SuggestionApp.Application.Enums.Suggestion;
 using SuggestionApp.Application.Interfaces;
 
@@ -63,13 +64,20 @@ namespace SuggestionApp.Api.Controllers
         }
 
         [Authorize(Roles = Roles.Admin)]
-        [HttpGet(Routes.Suggestion.SuggestionsByUser)]
+        [HttpGet(Routes.Suggestion.FilterSuggestions)]
 
-        public async Task<ActionResult<List<GetAllSuggestionsByUserIdResponse>>>SuggestionsByUser(
-            [FromBody]GetAllSuggestionsByUserIdRequest getAllSuggestionsByUserIdRequest)
-        {
-           var (status,value)= await _suggestionService
-                .GetAllSuggestionsByUser(getAllSuggestionsByUserIdRequest.UserId);
+        public async Task<ActionResult<List<GetAllSuggestionsByUserIdResponse>>> FilterSuggestions(
+            [FromQuery] GetFilterSuggestionRequest filterSuggestionRequest) {
+            var request = new GetFilterSuggestionDto
+            {
+                Date = filterSuggestionRequest.Date,
+                Status = filterSuggestionRequest.Status,
+                UserId = filterSuggestionRequest.UserId,
+                SuggestionId = filterSuggestionRequest.SuggestionId
+            };
+
+            var (status, value) = await _suggestionService
+                 .GetAllSuggestionsByFilter(request);
 
             return status switch
             {
@@ -80,11 +88,28 @@ namespace SuggestionApp.Api.Controllers
             };
         }
 
-        [Authorize (Roles = $"{Roles.User},{Roles.Admin}")]
+        [Authorize(Roles = Roles.Admin)]
+        [HttpGet(Routes.Suggestion.GetAll)]
+
+        public async Task<ActionResult<List<GetAllSuggestionsResponse>>> AllSuggestions()
+        {
+            var (status, value) = await _suggestionService
+                 .GetAllSuggestions();
+
+            return status switch
+            {
+                GetAllSuggestionsByUserIdStatus.Success => Ok(value),
+                GetAllSuggestionsByUserIdStatus.UserNotFound => NotFound("User not found."),
+                GetAllSuggestionsByUserIdStatus.Failure => StatusCode(500, "An error occurred."),
+                _ => StatusCode(500, "Unknown error.")
+            };
+        }
+
+        [Authorize(Roles = $"{Roles.User},{Roles.Admin}")]
         [HttpGet(Routes.Suggestion.MySuggestions)]
         public async Task<ActionResult<List<GetAllSuggestionsByUserIdResponse>>> GetMySuggestions()
         {
-            string userId=User.GetUserId();
+            string userId = User.GetUserId();
 
             if (userId is null)
                 return BadRequest();

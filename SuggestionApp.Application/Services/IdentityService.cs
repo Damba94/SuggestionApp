@@ -104,6 +104,8 @@ namespace SuggestionApp.Application.Services
 
 
 
+
+
         private string GenerateJwt(
             string userId,
             string userName,
