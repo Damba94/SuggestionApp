@@ -193,14 +193,14 @@ namespace SuggestionApp.Frontend.Forms
         {
             var items = new List<SuggestionStatusComboBox>
             {
-                new SuggestionStatusComboBox { Text = "— Odaberi —", Value = null } 
+                new SuggestionStatusComboBox { Text = "— Odaberi —", Value = null }
             };
 
             items.AddRange(Enum.GetValues(typeof(SuggestionStatus))
                 .Cast<SuggestionStatus>()
                 .Select(status => new SuggestionStatusComboBox
                 {
-                    Text = status.ToString(), 
+                    Text = status.ToString(),
                     Value = status
                 }));
 
@@ -293,6 +293,14 @@ namespace SuggestionApp.Frontend.Forms
             {
                 MessageBox.Show("neuspjelo: " + response.StatusCode);
             }
+        }
+
+        private void logOutButton_Click(object sender, EventArgs e)
+        {
+            SessionStorage.Token = null;
+            var loginForm = new LoginForm();
+            loginForm.Show();
+            this.Close();
         }
     }
 

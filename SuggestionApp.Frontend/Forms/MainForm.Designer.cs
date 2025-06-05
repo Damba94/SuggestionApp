@@ -40,6 +40,7 @@ namespace SuggestionApp.Frontend.Forms
             dateTimePicker1 = new DateTimePicker();
             enumCombobox = new ComboBox();
             useDateCheckbox = new CheckBox();
+            logOutButton = new Button();
             ((System.ComponentModel.ISupportInitialize)dataGridViewProducts).BeginInit();
             SuspendLayout();
             // 
@@ -157,11 +158,22 @@ namespace SuggestionApp.Frontend.Forms
             useDateCheckbox.Text = "koristi datum";
             useDateCheckbox.UseVisualStyleBackColor = true;
             // 
+            // logOutButton
+            // 
+            logOutButton.Location = new Point(1177, 561);
+            logOutButton.Name = "logOutButton";
+            logOutButton.Size = new Size(112, 34);
+            logOutButton.TabIndex = 14;
+            logOutButton.Text = "Odjava";
+            logOutButton.UseVisualStyleBackColor = true;
+            logOutButton.Click += logOutButton_Click;
+            // 
             // MainForm
             // 
             AutoScaleDimensions = new SizeF(10F, 25F);
             AutoScaleMode = AutoScaleMode.Font;
             ClientSize = new Size(1411, 667);
+            Controls.Add(logOutButton);
             Controls.Add(useDateCheckbox);
             Controls.Add(enumCombobox);
             Controls.Add(dateTimePicker1);
@@ -196,5 +208,6 @@ namespace SuggestionApp.Frontend.Forms
         private DateTimePicker dateTimePicker1;
         private ComboBox enumCombobox;
         private CheckBox useDateCheckbox;
+        private Button logOutButton;
     }
 }
