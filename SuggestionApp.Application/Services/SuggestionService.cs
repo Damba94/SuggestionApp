@@ -188,6 +188,36 @@ namespace SuggestionApp.Application.Services
                 return (GetAllSuggestionsByUserIdStatus.Failure, null);
             }
         }
+
+        public async Task<(GetAllSuggestionsByUserIdStatus Status, GetSuggestionByIdResult? Value)> GetSuggestion(int suggestionId)
+        {
+            try
+            {
+                var suggestion = await _context.Suggestions
+                    .AsNoTracking()
+                    .Where(s => s.Id == suggestionId)
+                    .Select(s => new GetSuggestionByIdResult
+                    {
+                        Status = s.Status,
+                        SuggestionId = s.Id,
+                        SugestionTxt = s.Text,
+                        FirstName = s.User.FirstName,
+                        LastName = s.User.LastName,
+                        ProductName = s.Product.Name,
+                        DateCreated = s.DateCreated
+                    })
+                    .SingleOrDefaultAsync();
+                    
+                   
+
+                return (GetAllSuggestionsByUserIdStatus.Success, suggestion);
+
+            }
+            catch
+            {
+                return (GetAllSuggestionsByUserIdStatus.Failure, null);
+            }
+        }
     }
 }
 

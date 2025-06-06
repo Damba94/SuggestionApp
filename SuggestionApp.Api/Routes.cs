@@ -38,6 +38,8 @@ namespace SuggestionApp.Api
             public const string FilterSuggestions = $"{_controllerBase}/filter";
 
             public const string MySuggestions = $"{_controllerBase}/mySuggestions";
+
+            public const string Suggestionbyid = $"{_controllerBase}/suggestion";
         }
 
         public static class User

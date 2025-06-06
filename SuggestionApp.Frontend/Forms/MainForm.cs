@@ -225,11 +225,6 @@ namespace SuggestionApp.Frontend.Forms
                 productId = product.Id.ToString();
             }
 
-            if (useDateCheckbox.Checked)
-            {
-                var date = dateTimePicker1;
-            }
-
             var query = HttpUtility.ParseQueryString(string.Empty);
 
             if (!string.IsNullOrWhiteSpace(selectedUserId))
@@ -302,6 +297,41 @@ namespace SuggestionApp.Frontend.Forms
             loginForm.Show();
             this.Close();
         }
+
+        private async void getSuggestionButton_Click(object sender, EventArgs e)
+        {
+            if (dataGridViewProducts.SelectedRows.Count == 0)
+            {
+                MessageBox.Show("Molimo odaberite jedan prijedlog .");
+                return;
+            }
+
+            var selectedRow = dataGridViewProducts.SelectedRows[0];
+            var suggestion = (GetAllSuggestionResponse)selectedRow.DataBoundItem;
+            var suggestionId = suggestion.SuggestionId;
+
+            var baseUrl = Properties.Settings.Default.ApiBaseUrl;
+            var token = SessionStorage.Token;
+
+            using var client = new HttpClient();
+            client.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("Bearer", token);
+
+            var response = await client.GetAsync($"{baseUrl}/suggestion/suggestion?suggestionId={suggestionId}");
+
+            if (response.IsSuccessStatusCode)
+            {
+                var json = await response.Content.ReadAsStringAsync();
+                var suggestions = JsonConvert.DeserializeObject<GetSuggestionByIdResponse>(json);
+
+                var form = new UpdateSuggestionForm(suggestions);
+                form.Show();
+            }
+            else
+            {
+                MessageBox.Show("neuspjelo: " + response.StatusCode);
+            }
+        }
+    }
     }
 
-}
+

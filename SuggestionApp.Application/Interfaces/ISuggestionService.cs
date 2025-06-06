@@ -10,5 +10,6 @@ namespace SuggestionApp.Application.Interfaces
         Task<(GetAllSuggestionsByUserIdStatus Status, List<GetAllSuggestionsResult>? Value)> GetAllSuggestions();
         Task<(GetAllSuggestionsByUserIdStatus Status, List<GetAllSuggestionsByUserIdResult>? Value)> GetAllSuggestionsByFilter(GetFilterSuggestionDto getFilterSuggestionDto);
         Task<(GetAllSuggestionsByUserIdStatus Status, List<GetAllSuggestionsByUserIdResult>? Value)> GetAllSuggestionsByUser(string userId);
+        Task<(GetAllSuggestionsByUserIdStatus Status, GetSuggestionByIdResult? Value)> GetSuggestion(int suggestionId);
     }
 }

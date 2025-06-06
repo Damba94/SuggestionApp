@@ -41,6 +41,7 @@ namespace SuggestionApp.Frontend.Forms
             enumCombobox = new ComboBox();
             useDateCheckbox = new CheckBox();
             logOutButton = new Button();
+            getSuggestionButton = new Button();
             ((System.ComponentModel.ISupportInitialize)dataGridViewProducts).BeginInit();
             SuspendLayout();
             // 
@@ -160,7 +161,7 @@ namespace SuggestionApp.Frontend.Forms
             // 
             // logOutButton
             // 
-            logOutButton.Location = new Point(1177, 561);
+            logOutButton.Location = new Point(1277, 28);
             logOutButton.Name = "logOutButton";
             logOutButton.Size = new Size(112, 34);
             logOutButton.TabIndex = 14;
@@ -168,11 +169,22 @@ namespace SuggestionApp.Frontend.Forms
             logOutButton.UseVisualStyleBackColor = true;
             logOutButton.Click += logOutButton_Click;
             // 
+            // getSuggestionButton
+            // 
+            getSuggestionButton.Location = new Point(827, 515);
+            getSuggestionButton.Name = "getSuggestionButton";
+            getSuggestionButton.Size = new Size(218, 34);
+            getSuggestionButton.TabIndex = 15;
+            getSuggestionButton.Text = "prikaži prijedlog";
+            getSuggestionButton.UseVisualStyleBackColor = true;
+            getSuggestionButton.Click += getSuggestionButton_Click;
+            // 
             // MainForm
             // 
             AutoScaleDimensions = new SizeF(10F, 25F);
             AutoScaleMode = AutoScaleMode.Font;
             ClientSize = new Size(1411, 667);
+            Controls.Add(getSuggestionButton);
             Controls.Add(logOutButton);
             Controls.Add(useDateCheckbox);
             Controls.Add(enumCombobox);
@@ -209,5 +221,6 @@ namespace SuggestionApp.Frontend.Forms
         private ComboBox enumCombobox;
         private CheckBox useDateCheckbox;
         private Button logOutButton;
+        private Button getSuggestionButton;
     }
 }

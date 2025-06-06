@@ -126,5 +126,23 @@ namespace SuggestionApp.Api.Controllers
 
         }
 
+        [Authorize(Roles = Roles.Admin)]
+        [HttpGet(Routes.Suggestion.Suggestionbyid)]
+
+        public async Task<ActionResult<GetSuggestionByIdResponse>> GetSuggestionById(
+            [FromQuery]int suggestionId)
+        {
+            var (status, value) = await _suggestionService
+                 .GetSuggestion(suggestionId);
+
+            return status switch
+            {
+                GetAllSuggestionsByUserIdStatus.Success => Ok(value),
+                GetAllSuggestionsByUserIdStatus.UserNotFound => NotFound("User not found."),
+                GetAllSuggestionsByUserIdStatus.Failure => StatusCode(500, "An error occurred."),
+                _ => StatusCode(500, "Unknown error.")
+            };
+        }
+
     }
 }
