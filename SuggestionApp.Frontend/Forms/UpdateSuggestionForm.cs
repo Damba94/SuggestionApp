@@ -2,16 +2,8 @@ using Newtonsoft.Json;
 using SuggestionApp.Api.Dtos.SuggestionDtos;
 using SuggestionApp.Frontend.Dtos.SuggestionDtos;
 using SuggestionApp.Frontend.Helpers;
-using System;
-using System.Collections.Generic;
-using System.ComponentModel;
-using System.Data;
-using System.Drawing;
-using System.Linq;
 using System.Net.Http.Headers;
 using System.Text;
-using System.Threading.Tasks;
-using System.Windows.Forms;
 
 namespace SuggestionApp.Frontend.Forms
 {
@@ -70,8 +62,8 @@ namespace SuggestionApp.Frontend.Forms
 
             var suggestion = new ChangeSuggestionStatusRequest
             {
-                SuggestionId=_getSuggestionByIdResponse.SuggestionId,
-                Status=(int)selectedStatus.Value,
+                SuggestionId = _getSuggestionByIdResponse.SuggestionId,
+                Status = (int)selectedStatus.Value,
 
             };
 

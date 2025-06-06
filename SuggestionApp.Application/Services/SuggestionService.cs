@@ -1,4 +1,3 @@
-using Azure.Core;
 using Microsoft.EntityFrameworkCore;
 using SuggestionApp.Application.Dtos.SuggestionService;
 using SuggestionApp.Application.Enums.Suggestion;
@@ -139,8 +138,8 @@ namespace SuggestionApp.Application.Services
                     {
                         Status = s.Status,
                         SuggestionId = s.Id,
-                        FirstName=s.User.FirstName,
-                        LastName=s.User.LastName,
+                        FirstName = s.User.FirstName,
+                        LastName = s.User.LastName,
                         ProductName = s.Product.Name,
                         DateCreated = s.DateCreated
                     })
@@ -207,8 +206,8 @@ namespace SuggestionApp.Application.Services
                         DateCreated = s.DateCreated
                     })
                     .SingleOrDefaultAsync();
-                    
-                   
+
+
 
                 return (GetAllSuggestionsByUserIdStatus.Success, suggestion);
 

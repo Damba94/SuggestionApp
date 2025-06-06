@@ -8,7 +8,7 @@ namespace SuggestionApp.Api.Dtos.SuggestionDtos
     {
         public int SuggestionId { get; set; }
         public string ProductName { get; set; } = null!;
-        public string SugestionTxt { get; set; }=null!;
+        public string SugestionTxt { get; set; } = null!;
         public string FirstName { get; set; } = null!;
         public string LastName { get; set; } = null!;
         public DateTime DateCreated { get; set; }

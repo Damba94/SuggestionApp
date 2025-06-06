@@ -67,7 +67,8 @@ namespace SuggestionApp.Api.Controllers
         [HttpGet(Routes.Suggestion.FilterSuggestions)]
 
         public async Task<ActionResult<List<GetAllSuggestionsByUserIdResponse>>> FilterSuggestions(
-            [FromQuery] GetFilterSuggestionRequest filterSuggestionRequest) {
+            [FromQuery] GetFilterSuggestionRequest filterSuggestionRequest)
+        {
             var request = new GetFilterSuggestionDto
             {
                 Date = filterSuggestionRequest.Date,
@@ -130,7 +131,7 @@ namespace SuggestionApp.Api.Controllers
         [HttpGet(Routes.Suggestion.Suggestionbyid)]
 
         public async Task<ActionResult<GetSuggestionByIdResponse>> GetSuggestionById(
-            [FromQuery]int suggestionId)
+            [FromQuery] int suggestionId)
         {
             var (status, value) = await _suggestionService
                  .GetSuggestion(suggestionId);

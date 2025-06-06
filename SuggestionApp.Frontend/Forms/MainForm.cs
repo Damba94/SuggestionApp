@@ -1,12 +1,10 @@
 using Newtonsoft.Json;
 using SuggestionApp.Api.Dtos.ProductDtos;
-using SuggestionApp.Api.Dtos.SuggestionDtos;
 using SuggestionApp.Frontend.Dtos.SuggestionDtos;
 using SuggestionApp.Frontend.Dtos.User;
 using SuggestionApp.Frontend.Helpers;
 using System.Net.Http.Headers;
 using System.Web;
-using System.Windows.Forms.VisualStyles;
 
 namespace SuggestionApp.Frontend.Forms
 {
@@ -332,6 +330,6 @@ namespace SuggestionApp.Frontend.Forms
             }
         }
     }
-    }
+}
 
 
