@@ -112,7 +112,7 @@ namespace SuggestionApp.Frontend.Forms
             comboBoxUsers.Name = "comboBoxUsers";
             comboBoxUsers.Size = new Size(182, 33);
             comboBoxUsers.TabIndex = 6;
-            comboBoxUsers.SelectedIndexChanged += comboBox1_SelectedIndexChanged;
+
             // 
             // getSuggestionsByIdButton
             // 

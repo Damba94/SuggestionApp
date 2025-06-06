@@ -7,10 +7,22 @@ namespace SuggestionApp.Frontend.Helpers
             button.Visible = allowedRoles.Contains(currentRole);
         }
 
-        public static void SetControlEnabled(Control control, string currentRole, params string[] allowedRoles)
+        public static void SetComboBoxVisibility(ComboBox comboBox, string currentRole, params string[] allowedRoles)
         {
-            control.Enabled = allowedRoles.Contains(currentRole);
+            comboBox.Visible = allowedRoles.Contains(currentRole);
+        }
+
+        public static void SetCheckBoxVisibility(CheckBox checkBox, string currentRole, params string[] allowedRoles)
+        {
+            checkBox.Visible = allowedRoles.Contains(currentRole);
+        }
+
+        public static void SetDatePickerVisibility(DateTimePicker datePicker, string currentRole, params string[] allowedRoles)
+        {
+            datePicker.Visible = allowedRoles.Contains(currentRole);
         }
     }
+
+
 
 }

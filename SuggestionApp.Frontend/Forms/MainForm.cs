@@ -23,8 +23,15 @@ namespace SuggestionApp.Frontend.Forms
             UiHelper.SetButtonVisibility(addProductButton, currentRole, "ADMIN");
             UiHelper.SetButtonVisibility(addUserButton, currentRole, "ADMIN");
             UiHelper.SetButtonVisibility(mySuggestionsButton, currentRole, "USER");
-
-            LoadUsersIntoComboBox();
+            UiHelper.SetButtonVisibility(getSuggestionButton, currentRole, "ADMIN");
+            UiHelper.SetButtonVisibility(getSuggestionsByIdButton, currentRole, "ADMIN");
+            UiHelper.SetButtonVisibility(getAllSuggestions, currentRole, "ADMIN");
+            UiHelper.SetCheckBoxVisibility(useDateCheckbox, currentRole, "ADMIN");
+            UiHelper.SetComboBoxVisibility(comboBoxUsers, currentRole, "ADMIN");
+            UiHelper.SetComboBoxVisibility(enumCombobox, currentRole, "ADMIN");
+            UiHelper.SetDatePickerVisibility(dateTimePicker1, currentRole, "ADMIN");
+            if(SessionStorage.Role == "ADMIN")
+                LoadUsersIntoComboBox();
             LoadStatusIntoCobobox();
         }
         private async void getProductsButton_Click(object sender, EventArgs e)
@@ -143,10 +150,6 @@ namespace SuggestionApp.Frontend.Forms
             }
         }
 
-        private void comboBox1_SelectedIndexChanged(object sender, EventArgs e)
-        {
-
-        }
 
         private async Task LoadUsersIntoComboBox()
         {
