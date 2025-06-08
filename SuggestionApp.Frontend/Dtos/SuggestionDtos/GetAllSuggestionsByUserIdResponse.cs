@@ -4,7 +4,7 @@ namespace SuggestionApp.Frontend.Dtos.SuggestionDtos
 {
     public class GetAllSuggestionsByUserIdResponse
     {
-        public string SuggestionId { get; set; } = null!;
+        public int SuggestionId { get; set; } 
         public string ProductName { get; set; } = null!;
         public DateTime DateCreated { get; set; }
         public SuggestionStatus Status { get; set; }

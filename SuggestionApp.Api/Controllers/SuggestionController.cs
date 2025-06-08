@@ -74,7 +74,7 @@ namespace SuggestionApp.Api.Controllers
                 Date = filterSuggestionRequest.Date,
                 Status = filterSuggestionRequest.Status,
                 UserId = filterSuggestionRequest.UserId,
-                SuggestionId = filterSuggestionRequest.SuggestionId
+                ProductId = filterSuggestionRequest.ProductId
             };
 
             var (status, value) = await _suggestionService

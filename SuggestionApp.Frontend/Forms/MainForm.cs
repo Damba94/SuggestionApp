@@ -87,16 +87,26 @@ namespace SuggestionApp.Frontend.Forms
 
         private void LoadSuggestions(List<GetAllSuggestionResponse> suggestions)
         {
-            dataGridViewProducts.DataSource = suggestions;
+                bool allFirstNamesNull = suggestions.All(s => string.IsNullOrEmpty(s.FirstName));
+    bool allLastNamesNull = suggestions.All(s => string.IsNullOrEmpty(s.LastName));
 
-            dataGridViewProducts.ReadOnly = true;
-            dataGridViewProducts.AllowUserToAddRows = false;
-            dataGridViewProducts.AllowUserToDeleteRows = false;
+    dataGridViewProducts.DataSource = suggestions;
 
-            dataGridViewProducts.SelectionMode = DataGridViewSelectionMode.FullRowSelect;
-            dataGridViewProducts.MultiSelect = false;
+    dataGridViewProducts.ReadOnly = true;
+    dataGridViewProducts.AllowUserToAddRows = false;
+    dataGridViewProducts.AllowUserToDeleteRows = false;
 
-            dataGridViewProducts.Columns["SuggestionId"].Visible = false;
+    dataGridViewProducts.SelectionMode = DataGridViewSelectionMode.FullRowSelect;
+    dataGridViewProducts.MultiSelect = false;
+
+    if (dataGridViewProducts.Columns.Contains("SuggestionId"))
+        dataGridViewProducts.Columns["SuggestionId"].Visible = false;
+
+    if (allFirstNamesNull && dataGridViewProducts.Columns.Contains("FirstName"))
+        dataGridViewProducts.Columns["FirstName"].Visible = false;
+
+    if (allLastNamesNull && dataGridViewProducts.Columns.Contains("LastName"))
+        dataGridViewProducts.Columns["LastName"].Visible = false;
         }
 
         private void createSuggestionButton_Click(object sender, EventArgs e)
@@ -222,8 +232,12 @@ namespace SuggestionApp.Frontend.Forms
             if (dataGridViewProducts.SelectedRows.Count > 0)
             {
                 var selectedRow = dataGridViewProducts.SelectedRows[0];
-                var product = (GetAllProductsResponse)selectedRow.DataBoundItem;
-                productId = product.Id.ToString();
+                var product = selectedRow.DataBoundItem as GetAllProductsResponse;
+
+                if (product != null)
+                {
+                    productId = product.Id.ToString();
+                }
             }
 
             var query = HttpUtility.ParseQueryString(string.Empty);
@@ -257,9 +271,19 @@ namespace SuggestionApp.Frontend.Forms
             if (response.IsSuccessStatusCode)
             {
                 var json = await response.Content.ReadAsStringAsync();
-                var suggestions = JsonConvert.DeserializeObject<List<GetAllSuggestionsByUserIdResponse>>(json);
+                var data = JsonConvert.DeserializeObject<List<GetAllSuggestionsByUserIdResponse>>(json);
 
-                LoadSuggestionsByUser(suggestions);
+                var suggestions = data.Select(s => new GetAllSuggestionResponse
+                {
+                    SuggestionId = s.SuggestionId,
+                    DateCreated = s.DateCreated,
+                    ProductName = s.ProductName,
+                    Status = s.Status,
+
+                }).ToList();
+
+                
+                LoadSuggestions(suggestions);
             }
             else
             {
@@ -303,12 +327,18 @@ namespace SuggestionApp.Frontend.Forms
         {
             if (dataGridViewProducts.SelectedRows.Count == 0)
             {
-                MessageBox.Show("Molimo odaberite jedan prijedlog .");
+                MessageBox.Show("Molimo odaberite jedan prijedlog.");
                 return;
             }
 
             var selectedRow = dataGridViewProducts.SelectedRows[0];
-            var suggestion = (GetAllSuggestionResponse)selectedRow.DataBoundItem;
+
+            if (selectedRow.DataBoundItem is not GetAllSuggestionResponse suggestion)
+            {
+                MessageBox.Show("Molimo odaberite jedan prijedlog.");
+                return;
+            }
+
             var suggestionId = suggestion.SuggestionId;
 
             var baseUrl = Properties.Settings.Default.ApiBaseUrl;

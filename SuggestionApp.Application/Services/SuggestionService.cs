@@ -97,10 +97,10 @@ namespace SuggestionApp.Application.Services
                 if (!string.IsNullOrEmpty(getFilterSuggestionDto.UserId))
                     query = query.Where(s => s.UserId == getFilterSuggestionDto.UserId);
 
-                if (!string.IsNullOrEmpty(getFilterSuggestionDto.SuggestionId) &&
-                    int.TryParse(getFilterSuggestionDto.SuggestionId, out var suggestionId))
+                if (!string.IsNullOrEmpty(getFilterSuggestionDto.ProductId) &&
+                    int.TryParse(getFilterSuggestionDto.ProductId, out var prductId))
                 {
-                    query = query.Where(s => s.Id == suggestionId);
+                    query = query.Where(s => s.ProductId == prductId);
                 }
 
 
