@@ -2,6 +2,7 @@ using FluentValidation;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using SuggestionApp.Api.Dtos.AuthDtos;
+using SuggestionApp.Api.Extensions;
 using SuggestionApp.Application.Constants;
 using SuggestionApp.Application.Enums;
 using SuggestionApp.Application.Interfaces;
@@ -45,7 +46,8 @@ namespace SuggestionApp.Api.Controllers
         }
 
         [HttpPost(Routes.Auth.Login)]
-        public async Task<ActionResult<LoginResponse>> Login([FromBody] LoginRequest loginRequest)
+        public async Task<ActionResult<LoginResponse>> Login(
+            [FromBody] LoginRequest loginRequest)
         {
             await _loginRequestValidator
                 .ValidateAndThrowAsync(loginRequest);
@@ -57,6 +59,35 @@ namespace SuggestionApp.Api.Controllers
                 return BadRequest();
 
             return Ok(value!.ToDto());
+        }
+
+        [HttpPost(Routes.Auth.RefreshToken)]
+        public async Task<ActionResult<LoginResponse>> Refreshtoken(
+            [FromBody] RefreshTokenRequest refreshTokenRequest)
+        {
+            var mappedRequest = refreshTokenRequest
+                .ToApplicationDto(User.GetUserId());
+
+            var (status,value)= await _identityService
+                .RefreshToken(mappedRequest);
+
+            return status switch
+            {
+                RefreshTokenStatus.Success => Ok(value),
+
+                RefreshTokenStatus.UserNotFound => NotFound("Korisnik nije pronađen."),
+
+                RefreshTokenStatus.TokenNotFound => Unauthorized("Refresh token nije pronađen."),
+
+                RefreshTokenStatus.TokenExpired => Unauthorized("Refresh token je istekao."),
+
+                RefreshTokenStatus.TokenAlreadyUsed => Unauthorized("Refresh token je već iskorišten."),
+
+                RefreshTokenStatus.Error => StatusCode(500, "Došlo je do interne greške."),
+
+                _ => StatusCode(500, "Nepoznata greška.")
+            };
+
         }
     }
 }

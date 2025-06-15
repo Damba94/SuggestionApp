@@ -1,9 +1,10 @@
-﻿namespace SuggestionApp.Application.Enums
+namespace SuggestionApp.Application.Enums
 {
     public enum LoginStatus
     {
         UnknownEmailError,
         InvalidPasswordError,
-        Success
+        Success,
+        DatabaseError,
     }
 }

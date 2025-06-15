@@ -7,6 +7,7 @@ namespace SuggestionApp.Application.Interfaces
     public interface IIdentityService
     {
         Task<(LoginStatus Status, LoginResult? Value)> Login(UserLoginDto userLoginData);
+        Task<(RefreshTokenStatus Status, LoginResult? Value)> RefreshToken(RefreshTokenDto refreshTokenDto);
         Task<(RegistrationStatus Status, UserRegisterResult? Value)> UserRegister(UserRegisterDto userRegisterData);
 
         /*

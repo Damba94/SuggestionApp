@@ -317,7 +317,8 @@ namespace SuggestionApp.Frontend.Forms
 
         private void logOutButton_Click(object sender, EventArgs e)
         {
-            SessionStorage.Token = null;
+            SessionStorage.Token = "";
+            SessionStorage.RefreshToken = "";
             var loginForm = new LoginForm();
             loginForm.Show();
             this.Close();

@@ -12,7 +12,7 @@ namespace SuggestionApp.Api
 
             public const string Login = $"{_controllerBase}/login";
 
-            public const string RefreshToken = $"{_controllerBase}/refresh-token";
+            public const string RefreshToken = $"{_controllerBase}/refreshtoken";
 
         }
 

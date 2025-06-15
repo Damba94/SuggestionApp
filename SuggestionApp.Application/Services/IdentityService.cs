@@ -1,10 +1,13 @@
 using Microsoft.AspNetCore.Identity;
+using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
 using Microsoft.IdentityModel.Tokens;
+
 using SuggestionApp.Application.Constants;
 using SuggestionApp.Application.Dtos.IdentityService;
 using SuggestionApp.Application.Enums;
 using SuggestionApp.Application.Interfaces;
+using SuggestionApp.Data.Context;
 using SuggestionApp.Data.Enums;
 using SuggestionApp.Data.Models;
 using System.IdentityModel.Tokens.Jwt;
@@ -19,12 +22,15 @@ namespace SuggestionApp.Application.Services
     {
         private readonly IConfiguration _configuration;
         private readonly UserManager<ApplicationUser> _userManager;
+        private readonly ApplicationDbContext _applicationDbContext;
         public IdentityService(
             IConfiguration configuration,
-            UserManager<ApplicationUser> userManager)
+            UserManager<ApplicationUser> userManager,
+            ApplicationDbContext applicationDbContext)
         {
             _configuration = configuration;
             _userManager = userManager;
+            _applicationDbContext = applicationDbContext;
         }
         public async Task<(RegistrationStatus Status, UserRegisterResult? Value)> UserRegister(UserRegisterDto userRegisterData)
         {
@@ -62,7 +68,6 @@ namespace SuggestionApp.Application.Services
                 new UserRegisterResult
                 {
                     Jwt = jwt,
-                    //RefreshToken = GenerateRefreshToken(),
                 });
         }
 
@@ -86,25 +91,92 @@ namespace SuggestionApp.Application.Services
                 user.UserName,
                 user.Email,
                 roles[0]);
-            //var refreshToken = GenerateRefreshToken();
 
-            //user.RefreshToken = refreshToken;
-            //user.RefreshTokenCreated = DateTime.UtcNow;
+            var refreshToken = new RefreshToken
+            {
+                UserId = user.Id,
+                ExpiresAt = DateTime.UtcNow.AddDays(_configuration.GetValue<int>("Identity:RefreshTokenValidDays"))
+            }; 
 
-            //await _userService.UpdateUser(user);
+            try
+            {
+                await _applicationDbContext.RefreshTokens.AddAsync(refreshToken);
+                await _applicationDbContext.SaveChangesAsync();
+            }
+            catch 
+            {
+                return (LoginStatus.DatabaseError, null);
+            }
 
             return (
                 LoginStatus.Success,
                 new LoginResult
                 {
                     Jwt = Jwt,
-                    //RefreshToken = refreshToken,
+                    RefreshToken = refreshToken.Token,
                 });
         }
 
+        public async Task<(RefreshTokenStatus Status,LoginResult? Value )>RefreshToken(
+            RefreshTokenDto refreshTokenDto)
+        {
 
+            var user = await _userManager.FindByIdAsync(refreshTokenDto.UserId);
 
+            if (user == null)
+            {
+                return (RefreshTokenStatus.UserNotFound,null);
+            }
 
+            var existingToken = await _applicationDbContext.RefreshTokens
+                .FirstOrDefaultAsync(r =>
+                    r.UserId == user.Id &&
+                    r.Token == refreshTokenDto.RefreshToken);
+
+            if (existingToken == null)
+                return (RefreshTokenStatus.TokenNotFound, null);
+
+            if (existingToken.IsUsed)
+                return (RefreshTokenStatus.TokenAlreadyUsed, null);
+
+            if (existingToken.ExpiresAt < DateTime.UtcNow)
+                return (RefreshTokenStatus.TokenExpired, null);
+
+            existingToken.IsUsed = true;
+
+            var roles = await _userManager.GetRolesAsync(user);
+
+            var newJwt = GenerateJwt(
+                user.Id,
+                user.UserName,
+                user.Email,
+                roles[0]);
+
+            var newRefreshToken = new RefreshToken
+            {
+                UserId = user.Id,
+                ExpiresAt = DateTime.UtcNow.AddDays(_configuration.GetValue<int>("Identity:RefreshTokenValidDays"))
+            };
+
+            try
+            {
+                await _applicationDbContext.RefreshTokens.AddAsync(newRefreshToken);
+                await _applicationDbContext.SaveChangesAsync();
+            }
+            catch 
+            {
+                return (RefreshTokenStatus.DatabaseError, null);
+            }
+
+            return (
+                RefreshTokenStatus.Success,
+                new LoginResult
+                {
+                    Jwt = newJwt,
+                    RefreshToken = newRefreshToken.Token
+                });
+
+        }
 
         private string GenerateJwt(
             string userId,
@@ -141,6 +213,7 @@ namespace SuggestionApp.Application.Services
 
             return Jwt;
         }
+
 
     }
 }

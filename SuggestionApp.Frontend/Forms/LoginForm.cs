@@ -44,6 +44,7 @@ namespace SuggestionApp.Frontend.Forms
 
                     SessionStorage.Token = loginResponse.Jwt;
                     SessionStorage.Role = role;
+                    SessionStorage.RefreshToken = loginResponse.RefreshToken;
 
                     MessageBox.Show("Login successful!");
 
